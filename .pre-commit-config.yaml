@@ -1,0 +1,51 @@
+default_language_version:
+  python: python3.13
+
+repos:
+  # Basic file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-toml
+
+  # Python tools via uvx (with version pinning)
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: Ruff Linting
+        entry: uvx ruff check
+        language: system
+        types: [python]
+        stages: [commit]
+
+      - id: ruff-format
+        name: Ruff Formatting
+        entry: uvx ruff format
+        language: system
+        types: [python]
+        stages: [commit]
+
+      # Experimental tools
+      - id: ty-check
+        name: Type Check with ty (experimental)
+        entry: uvx ty check .
+        language: system
+        types: [python]
+        stages: [commit]
+        pass_filenames: false
+        require_serial: true
+
+  # Security scanning
+  - repo: local
+    hooks:
+      - id: bandit-check
+        name: Security Check with Bandit
+        entry: uvx bandit -r src/
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [commit]
